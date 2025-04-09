@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Senha</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #00ff00;
+            width: 400px;
+            text-align: center;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #00ff00;
+            background-color: #000;
+            color: #00ff00;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #000;
+            color: #00ff00;
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .text-success {
+            color: lime;
+        }
+
+        .text-danger {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Recuperar Senha</h2>
+        <p>Digite seu e-mail cadastrado</p>
+        <form method="POST">
+            <input type="email" name="email" required placeholder="Seu e-mail">
+            <input type="submit" value="Enviar">
+        </form>
+        <br>
+        <a href="{{ url_for('login') }}">← Voltar ao login</a>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ 'text-success' if category == 'success' else 'text-danger' }}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

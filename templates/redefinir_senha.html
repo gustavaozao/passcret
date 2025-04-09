@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Redefinir Senha</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #00ff00;
+            width: 400px;
+            text-align: center;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #00ff00;
+            background-color: #000;
+            color: #00ff00;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #000;
+            color: #00ff00;
+            padding: 10px 20px;
+            border: 2px solid #00ff00;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .text-success {
+            color: lime;
+        }
+
+        .text-danger {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Nova Senha</h2>
+        <form method="POST" onsubmit="return validarFormulario();">
+            <input type="password" name="senha" id="senha" placeholder="Nova senha" required>
+            <input type="password" name="confirmar" id="confirmar" placeholder="Confirmar senha" required>
+            <p id="mensagem-erro" class="error"></p>
+            <input type="submit" value="Redefinir Senha">
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="{{ 'text-success' if category == 'success' else 'text-danger' }}">
+                {{ message }}
+              </p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <br>
+        <a href="{{ url_for('login') }}" style="color: #00ff00; text-decoration: none;">← Voltar ao login</a>
+    </div>
+
+    <script>
+        function validarFormulario() {
+            const senha = document.getElementById('senha').value;
+            const confirmar = document.getElementById('confirmar').value;
+            const erro = document.getElementById('mensagem-erro');
+            const caractereEspecial = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (!caractereEspecial.test(senha)) {
+                erro.textContent = "A senha deve conter pelo menos um caractere especial.";
+                return false;
+            }
+
+            if (senha !== confirmar) {
+                erro.textContent = "As senhas não coincidem.";
+                return false;
+            }
+
+            erro.textContent = "";
+            return true;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Conta - Passcret</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            font-family: 'Share Tech Mono', monospace;
+            background-color: black;
+            color: #00ff00;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 36px;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .orientacao {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #0f0;
+            text-align: center;
+        }
+
+        .erro {
+            color: red;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: black;
+            color: #0f0;
+            border: 1px solid #0f0;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 5px #0f0;
+        }
+
+        button {
+            padding: 10px;
+            background: black;
+            color: #0f0;
+            border: 1px solid #0f0;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0f0;
+            color: black;
+        }
+
+        .link-container {
+            margin-top: 20px;
+        }
+
+        a {
+            color: #0f0;
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="content">
+        <h1>Criar Conta</h1>
+
+        <div class="orientacao">
+            O nome de usuário deve conter até 15 caracteres.<br>
+        </div>
+
+        {% if erro %}
+            <div class="erro">{{ erro }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <label for="usuario">Usuário</label>
+            <input type="text" name="usuario" placeholder="Nome de Usuário" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Seuemail@gmail.com" required>
+
+            <label for="senha">Senha</label>
+            <input type="password" name="senha" placeholder="Senha" required>
+
+            <div class="orientacao">
+                A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial.
+            </div>
+
+            <button type="submit">Registrar</button>
+        </form>
+
+        <div class="link-container">
+            <p>Já tem uma conta? <a href="/login">Fazer login</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#00ff00" },
+                "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" } },
+                "opacity": { "value": 0.3, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00ff00", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "none", "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 100, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Passcret</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Share Tech Mono', monospace;
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            margin: 60px auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px #0f0;
+        }
+
+        .linha-verde {
+            height: 2px;
+            background: #0f0;
+            margin: 20px 0;
+            box-shadow: 0 0 10px #0f0;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: black;
+            color: #0f0;
+            border: 1px solid #0f0;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 4px #0f0;
+        }
+
+        button:hover {
+            background-color: #0f0;
+            color: black;
+        }
+
+        .senha-item {
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #0f0;
+            background: rgba(0, 255, 0, 0.1);
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .senha-item p {
+            margin: 5px 0;
+        }
+
+        .senha-actions {
+            margin-top: 10px;
+        }
+
+        .senha-actions button {
+            margin-right: 10px;
+        }
+
+        .logout {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+        }
+
+        .logout a {
+            color: #0f0;
+            text-decoration: none;
+            border: 1px solid #0f0;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .logout a:hover {
+            background-color: #0f0;
+            color: black;
+        }
+
+        .alert {
+            background-color: #0f0;
+            color: black;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="logout">
+    <a href="/logout">Sair</a>
+</div>
+<div class="container">
+    <h1>Bem-vindo, {{ usuario }}!</h1>
+    <div class="linha-verde"></div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="form-container">
+        <form method="POST" action="/add_senha">
+            <input type="text" name="site" placeholder="Site" required>
+            <input type="password" id="senha-input" name="senha" placeholder="Senha" required>
+            <button type="submit">➕ Adicionar Senha</button>
+        </form>
+
+        <form method="GET" action="/dashboard">
+            <input type="text" name="busca" placeholder="Buscar site...">
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+
+    <div class="linha-verde"></div>
+
+    <div class="gerador" style="margin-top: 30px; text-align: center;">
+        <h3 style="color: #00ff00;">🔐 Gerar Senha Segura</h3>
+        <input type="text" id="senha-gerada" readonly style="width: 60%; padding: 10px; background: black; color: #00ff00; border: 2px solid #00ff00; font-family: monospace; margin-bottom: 10px;">
+        <br>
+        <button onclick="gerarSenha()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer;">⚙️ Gerar senha</button>
+        <button onclick="copiarSenhaGerada()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer; margin-left: 10px;">📋 Copiar</button>
+        <p style="color: #00ff00; font-size: 14px; margin-top: 10px;">Assim que a senha for gerada, o seu campo de senha será preenchido automaticamente.</p>
+    </div>
+
+    <div class="linha-verde"></div>
+
+    {% if senhas %}
+    {% for s in senhas %}
+    <div class="senha-item" id="card-{{ loop.index }}">
+        <p><strong>Site:</strong> {{ s[0] }}</p> <!--TA VULNERAVEL AQUI ANIMAL-->
+        <p><strong>Senha:</strong>
+            <span id="senha-{{ loop.index }}" data-senha="{{ s[1] }}" style="background:black; border:none; color:#0f0; font-family:monospace;">••••</span>
+            <button onclick="toggleSenha('{{ loop.index }}')">👁️</button>
+        </p>
+        <div class="senha-actions">
+            <button onclick="copiarSenha('{{ loop.index }}')">📋 Copiar</button>
+            <button onclick="editarSenha('{{ s[0] }}')">✏️ Editar</button>
+            <button onclick="excluirSenha('{{ s[0] }}', '{{ loop.index }}')">🗑️ Excluir</button>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if request.args.get('busca') %}
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <form method="GET" action="{{ url_for('dashboard') }}">
+            <button type="submit" style="padding: 10px 20px; background-color: black; color: #00ff00; border: 2px solid #00ff00; font-family: 'Courier New', monospace; cursor: pointer; font-size: 16px; transition: 0.3s;"
+                    onmouseover="this.style.backgroundColor='#00ff00'; this.style.color='black';"
+                    onmouseout="this.style.backgroundColor='black'; this.style.color='#00ff00';">
+                🔁 Ver todos os sites
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <p>Nenhuma senha salva ainda.</p>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+    function toggleSenha(id) {
+        const span = document.getElementById('senha-' + id);
+        const senhaAtual = span.textContent;
+        span.textContent = senhaAtual === '••••' ? span.getAttribute('data-senha') : '••••';
+    }
+
+    function copiarSenha(id) {
+        const span = document.getElementById('senha-' + id);
+        const senha = span.getAttribute('data-senha');
+        navigator.clipboard.writeText(senha).then(() => alert("Senha copiada!")).catch(() => alert("Erro ao copiar senha."));
+    }
+
+    function editarSenha(site) {
+        const novaSenha = prompt("Digite a nova senha para " + site + ":");
+        if (novaSenha !== null && novaSenha !== "") {
+            fetch('/editar_senha', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ site: site, nova_senha: novaSenha })
+            }).then(response => response.ok ? location.reload() : alert('Erro ao editar'));
+        }
+    }
+
+    function excluirSenha(site, id) {
+        if (!confirm("Deseja realmente excluir esta senha?")) return;
+        fetch('/excluir_senha', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ site: site })
+        }).then(res => res.ok ? document.getElementById('card-' + id).remove() : alert("Erro ao excluir."));
+    }
+
+    function gerarSenha() {
+        const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const numeros = "0123456789";
+        const especiais = "!@#$%^&*()_+[]{}|;:,.<>?";
+        const todos = letras + numeros + especiais;
+
+        let senha = letras[Math.floor(Math.random() * letras.length)];
+        senha += letras.toUpperCase()[Math.floor(Math.random() * letras.length)];
+        senha += numeros[Math.floor(Math.random() * numeros.length)];
+        senha += especiais[Math.floor(Math.random() * especiais.length)];
+
+        for (let i = 0; i < 12; i++) {
+            senha += todos[Math.floor(Math.random() * todos.length)];
+        }
+
+        document.getElementById("senha-gerada").value = senha;
+        document.getElementById("senha-input").value = senha;
+    }
+
+    function copiarSenhaGerada() {
+        const campo = document.getElementById("senha-gerada");
+        campo.select();
+        campo.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(campo.value);
+        alert("Senha copiada!");
+    }
+
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+            "color": { "value": "#00ff00" },
+            "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" } },
+            "opacity": { "value": 0.3, "random": true },
+            "size": { "value": 3, "random": true },
+            "line_linked": { "enable": true, "distance": 150, "color": "#00ff00", "opacity": 0.2, "width": 1 },
+            "move": { "enable": true, "speed": 1, "direction": "none", "out_mode": "out" }
+        },
+        "interactivity": {
+            "events": {
+                "onhover": { "enable": true, "mode": "repulse" },
+                "onclick": { "enable": true, "mode": "push" },
+                "resize": true
+            },
+            "modes": {
+                "repulse": { "distance": 100, "duration": 0.4 },
+                "push": { "particles_nb": 4 }
+            }
+        },
+        "retina_detect": true
+    });
+</script>
+</body>
+</html>
