@@ -271,4 +271,5 @@ def redefinir_senha(token):
     return render_template('redefinir_senha.html', token=token)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=12344)
+    app.run(host='0.0.0.0', port=10000)
+
