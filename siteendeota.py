@@ -110,9 +110,9 @@ def register():
             return render_template('registro.html', erro="Usuário já existe.")
 
         confirmar = request.form['confirmar']
-            if senha != confirmar:
-                flash("As senhas não coincidem.", "danger")
-            return redirect(request.url)
+        if senha != confirmar:
+            flash("As senhas não coincidem.", "danger")
+        return redirect(request.url)
 
         cursor.execute("INSERT INTO usuarios (usuario, senha, email) VALUES (?, ?, ?)", (usuario, senha_hash, email))
         con.commit()
