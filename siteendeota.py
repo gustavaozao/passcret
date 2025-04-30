@@ -99,7 +99,7 @@ def register():
 
         if not validar_usuario(usuario) or not validar_senha(senha):
             flash("Senha ou usuário inválidos.", 'danger')
-            return redirect(request.url)
+        return redirect(request.url)
 
         senha_hash = ph.hash(senha)
         con = conectar_bd()
