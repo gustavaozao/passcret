@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Passcret</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         html, body {
@@ -185,7 +186,7 @@
             <button onclick="toggleSenha('{{ loop.index }}')">👁️</button>
         </p>
         <div class="senha-actions">
-            <button onclick="copiarSenha('{{ loop.index }}')">📋 Copiar</button>
+            <button onclick="copiarSenha('{{ loop.index }}')"><i class="fas fa-copy"></i> Copiar</button>
             <button onclick="editarSenha('{{ s[0] }}')">✏️ Editar</button>
             <button onclick="excluirSenha('{{ s[0] }}', '{{ loop.index }}')">🗑️ Excluir</button>
         </div>
