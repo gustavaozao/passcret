@@ -4,25 +4,29 @@ from argon2 import PasswordHasher
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
+from dotenv import load_dotenv
+import os
 import base64
 import sqlite3
 import re
 import requests
 import secrets
 
+load_dotenv()
+
 app = Flask(__name__)
 app.secret_key = 'amerdadakey'
 ph = PasswordHasher()
 
-AES_KEY = b'amerdadaoutrakeyamerdadaoutrakey'  # 32 bytes
+AES_KEY = os.getenv('AES_KEY').encode()  
 
 # Configurações do email
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'gustavoneves1003@gmail.com'
-app.config['MAIL_PASSWORD'] = 'jgowkqvigobamoao'
-app.config['MAIL_DEFAULT_SENDER'] = 'gustavoneves1003@gmail.com'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
 
 def conectar_bd():
