@@ -25,5 +25,5 @@ Sabemos que o código ainda possui vulnerabilidades não intencionais que fogem 
 ---
 ## Autores
 Desenvolvido por **Gustavo Neves** e **Renato Torres** 
-Alunos de Defesa Cibernética, FIAP - 2025
+> Alunos de Defesa Cibernética, FIAP - 2025
 
