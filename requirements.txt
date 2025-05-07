@@ -3,3 +3,4 @@ Flask-Mail
 argon2-cffi
 pycryptodome
 requests
+dotenv
