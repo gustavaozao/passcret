@@ -1,6 +1,7 @@
 # Passcret
 
 **Passcret** surgiu como uma iniciativa para explorar e compreender os processos envolvidos no desenvolvimento web, com foco especial em segurança da informação.  
+
 Nosso objetivo principal é entender como surgem vulnerabilidades, como explorá-las e, principalmente, como mitigá-las.
 
 ---
@@ -24,3 +25,5 @@ Sabemos que o código ainda possui vulnerabilidades não intencionais que fogem 
 ---
 ## Autores
 Desenvolvido por **Gustavo Neves** e **Renato Torres** 
+Alunos de Defesa Cibernética, FIAP - 2025
+
