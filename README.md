@@ -16,11 +16,9 @@ Nosso objetivo principal é entender como surgem vulnerabilidades, como explorá
   - Adicionar sites e suas respectivas senhas  
   - Gerar senhas seguras a partir de hashes
 
-> Este projeto foi desenvolvido com **fins educacionais e experimentais**.  
-> Sabemos que o código ainda possui vulnerabilidades não intencionais que fogem das boas práticas de segurança — e, honestamente, estão ali mais como **aula** do que como **exemplo**.
+Este projeto foi desenvolvido com **fins educacionais e experimentais**.  
+Sabemos que o código ainda possui vulnerabilidades não intencionais que fogem das boas práticas de segurança — e, honestamente, estão ali mais como **aula** do que como **exemplo**.
 
 ---
-
 ## Autores
-
 Desenvolvido por **Gustavo Neves** e **Renato Torres** 
