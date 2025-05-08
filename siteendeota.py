@@ -15,7 +15,7 @@ import secrets
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'senhamuitosecreta1234'
+app.secret_key = 'amerdadakey'
 ph = PasswordHasher()
 
 AES_KEY = os.getenv('AES_KEY').encode()  
