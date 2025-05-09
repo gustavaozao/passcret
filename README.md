@@ -17,7 +17,8 @@ Nosso objetivo principal é entender como surgem vulnerabilidades, como explorá
   - Adicionar sites e suas respectivas senhas  
   - Gerar senhas seguras a partir de hashes
 
-<colocar imagem da interface de usuario>
+![image](https://github.com/user-attachments/assets/45668bf8-c2bb-4977-a18b-88342f84816d)
+
 
 Este projeto foi desenvolvido com **fins educacionais e experimentais**.  
 Sabemos que o código ainda possui vulnerabilidades não intencionais que fogem das boas práticas de segurança — e, honestamente, estão ali mais como **aula** do que como **exemplo**.
