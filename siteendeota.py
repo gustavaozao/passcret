@@ -15,7 +15,7 @@ import secrets
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'amerdadakey'
+app.secret_key = os.getenv('SECRET_KEY')
 ph = PasswordHasher()
 
 AES_KEY = os.getenv('AES_KEY').encode()  
@@ -30,7 +30,8 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
 
 def conectar_bd():
-    return sqlite3.connect('banco.db')
+    caminho = os.path.join(os.path.dirname(__file__), 'banco.db')
+    return sqlite3.connect(caminho)
 
 def validar_usuario(usuario):
     return 3 <= len(usuario) <= 15
@@ -76,7 +77,7 @@ def login():
 
         con = conectar_bd()
         cursor = con.cursor()
-        cursor.execute(f"SELECT senha FROM usuarios WHERE usuario = '{usuario}'")
+        cursor.execute(f"SELECT senha FROM usuarios WHERE usuario = ?", (usuario,))
         resultado = cursor.fetchone()
         con.close()
 
@@ -100,24 +101,28 @@ def register():
         usuario = request.form['usuario']
         senha = request.form['senha']
         email = request.form['email']
+        confirmar = request.form['confirmar']
 
-        if not validar_usuario(usuario) or not validar_senha(senha):
-            flash("Senha ou usuário inválidos.", 'danger')
-        return redirect(request.url)
+        senha_invalida = not validar_senha(senha)
+        usuario_invalido = not validar_usuario(usuario)
 
-        senha_hash = ph.hash(senha)
+        if senha_invalida or usuario_invalido:
+            erro = "Senha ou usuário inválidos."
+            return render_template('registro.html', erro=erro, senha_invalida=senha_invalida, usuario=usuario, email=email)
+
+        if senha != confirmar:
+            erro = "As senhas não coincidem."
+            return render_template('registro.html', erro=erro, usuario=usuario, email=email)
+
         con = conectar_bd()
         cursor = con.cursor()
         cursor.execute("SELECT * FROM usuarios WHERE usuario = ?", (usuario,))
         if cursor.fetchone():
             con.close()
-            return render_template('registro.html', erro="Usuário já existe.")
+            erro = "Usuário já existe."
+            return render_template('registro.html', erro=erro, usuario=usuario, email=email)
 
-        confirmar = request.form['confirmar']
-        if senha != confirmar:
-            flash("As senhas não coincidem.", "danger")
-            return redirect(request.url)
-
+        senha_hash = ph.hash(senha)
         cursor.execute("INSERT INTO usuarios (usuario, senha, email) VALUES (?, ?, ?)", (usuario, senha_hash, email))
         con.commit()
         con.close()
@@ -141,14 +146,21 @@ def add_senha():
 
     try:
         senha_encriptada = criptografar_aes(senha)
-        with sqlite3.connect('banco.db', timeout=10) as con:
-            cursor = con.cursor()
-            cursor.execute("INSERT INTO senhas (usuario, site, senha) VALUES (?, ?, ?)",
-                           (usuario, site, senha_encriptada))
-            con.commit()
+        con = conectar_bd()
+        cursor = con.cursor()
+        cursor.execute(
+            "INSERT INTO senhas (usuario, site, senha) VALUES (?, ?, ?)",
+            (usuario, site, senha_encriptada)
+        )
+        con.commit()
         flash("Senha salva com sucesso!", "success")
-    except sqlite3.OperationalError as e:
-        flash(f"Erro de banco de dados: {e}", "danger")
+
+    except sqlite3.Error as e:
+        flash(f"Erro ao salvar no banco de dados: {e}", "danger")
+
+    finally:
+        if con:
+            con.close()
 
     return redirect(url_for('dashboard'))
 
@@ -163,7 +175,7 @@ def dashboard():
     usuario = session["usuario"]
     termo_busca = request.args.get("busca", "").strip()
 
-    con = sqlite3.connect("banco.db")
+    con = conectar_bd()
     cursor = con.cursor()
 
     if termo_busca:
@@ -193,11 +205,11 @@ def excluir_senha_route():
     data = request.get_json()
     site = data.get('site')
     if site:
-        conn = sqlite3.connect('banco.db') 
-        cursor = conn.cursor()
+        con = conectar_bd()
+        cursor = con.cursor()
         cursor.execute("DELETE FROM senhas WHERE site = ?", (site,))
-        conn.commit()
-        conn.close()
+        con.commit()
+        con.close()
         return jsonify({'status': 'ok'})
     return jsonify({'status': 'erro'}), 400
 
@@ -209,11 +221,11 @@ def editar_senha_route():
     if site and nova_senha:
         try:
             nova_criptografada = criptografar_aes(nova_senha)
-            conn = sqlite3.connect('banco.db')
-            cursor = conn.cursor()
+            con = conectar_bd()
+            cursor = con.cursor()
             cursor.execute("UPDATE senhas SET senha = ? WHERE site = ?", (nova_criptografada, site))
-            conn.commit()
-            conn.close()
+            con.commit()
+            con.close()
             return jsonify({'status': 'ok'})
         except Exception:
             return jsonify({'status': 'erro'}), 500
@@ -260,7 +272,7 @@ def redefinir_senha(token):
 
         nova_hash = ph.hash(nova_senha)
 
-        con = sqlite3.connect('banco.db')
+        con = conectar_bd()
         cursor = con.cursor()
         cursor.execute("SELECT usuario FROM usuarios WHERE token = ?", (token,))
         resultado = cursor.fetchone()

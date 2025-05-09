@@ -130,6 +130,15 @@
             margin-bottom: 20px;
             border-radius: 5px;
         }
+        h1 {
+            animation: piscar 1.5s infinite alternate;
+        }
+
+        @keyframes piscar {
+            0%   { text-shadow: 0 0 10px #0f0; }
+            100% { text-shadow: 0 0 20px #0f0, 0 0 40px #0f0; }
+        }
+
     </style>
 </head>
 <body>
@@ -155,7 +164,7 @@
         <form method="POST" action="/add_senha">
             <input type="text" name="site" placeholder="Site" required>
             <input type="password" id="senha-input" name="senha" placeholder="Senha" required>
-            <button type="submit">➕ Adicionar Senha</button>
+            <button type="submit"><i class="fas fa-plus"></i> Adicionar Senha</button>
         </form>
 
         <form method="GET" action="/dashboard">
@@ -167,11 +176,12 @@
     <div class="linha-verde"></div>
 
     <div class="gerador" style="margin-top: 30px; text-align: center;">
-        <h3 style="color: #00ff00;">🔐 Gerar Senha Segura</h3>
+        <h3 style="color: #00ff00;"><i class="fas fa-lock"></i> Gerar Senha Segura</h3>
         <input type="text" id="senha-gerada" readonly style="width: 60%; padding: 10px; background: black; color: #00ff00; border: 2px solid #00ff00; font-family: monospace; margin-bottom: 10px;">
         <br>
-        <button onclick="gerarSenha()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer;">⚙️ Gerar senha</button>
-        <button onclick="copiarSenhaGerada()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer; margin-left: 10px;">📋 Copiar</button>
+        <button onclick="gerarSenha()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer;"> <i class="fas fa-cogs"></i> Gerar senha
+        </button>
+        <button onclick="copiarSenhaGerada()" style="padding: 10px 20px; background: black; color: #00ff00; border: 2px solid #00ff00; cursor: pointer; margin-left: 10px;"><i class="fas fa-copy"></i> Copiar</button>
         <p style="color: #00ff00; font-size: 14px; margin-top: 10px;">Assim que a senha for gerada, o seu campo de senha será preenchido automaticamente.</p>
     </div>
 
@@ -180,15 +190,15 @@
     {% if senhas %}
     {% for s in senhas %}
     <div class="senha-item" id="card-{{ loop.index }}">
-        <p><strong>Site:</strong> {{ s[0] }}</p> <!--TA VULNERAVEL AQUI ANIMAL-->
+        <p><strong>Site:</strong> {{ s[0] }}</p> 
         <p><strong>Senha:</strong>
             <span id="senha-{{ loop.index }}" data-senha="{{ s[1] }}" style="background:black; border:none; color:#0f0; font-family:monospace;">••••</span>
-            <button onclick="toggleSenha('{{ loop.index }}')">👁️</button>
+            <button onclick="toggleSenha('{{ loop.index }}')"><i class="fas fa-eye"></i></button>
         </p>
         <div class="senha-actions">
             <button onclick="copiarSenha('{{ loop.index }}')"><i class="fas fa-copy"></i> Copiar</button>
-            <button onclick="editarSenha('{{ s[0] }}')">✏️ Editar</button>
-            <button onclick="excluirSenha('{{ s[0] }}', '{{ loop.index }}')">🗑️ Excluir</button>
+            <button onclick="editarSenha('{{ s[0] }}')"><i class="fas fa-edit"></i> Editar</button>
+            <button onclick="excluirSenha('{{ s[0] }}', '{{ loop.index }}')"><i class="fas fa-trash"></i> Excluir</button>
         </div>
     </div>
     {% endfor %}
@@ -217,11 +227,21 @@
         const senhaAtual = span.textContent;
         span.textContent = senhaAtual === '••••' ? span.getAttribute('data-senha') : '••••';
     }
-
-    function copiarSenha(id) {
+        function copiarSenha(id) {
         const span = document.getElementById('senha-' + id);
         const senha = span.getAttribute('data-senha');
-        navigator.clipboard.writeText(senha).then(() => alert("Senha copiada!")).catch(() => alert("Erro ao copiar senha."));
+
+        const inputTemp = document.createElement("input");
+        inputTemp.value = senha;
+        document.body.appendChild(inputTemp);
+
+        inputTemp.select();
+        inputTemp.setSelectionRange(0, 99999); 
+        document.execCommand("copy");
+
+        document.body.removeChild(inputTemp);
+
+        alert("Senha copiada!");
     }
 
     function editarSenha(site) {

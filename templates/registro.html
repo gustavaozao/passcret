@@ -101,6 +101,18 @@
         a:hover {
             color: #fff;
         }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.4s;
+        }
     </style>
 </head>
 <body>
@@ -119,13 +131,14 @@
 
         <form method="POST">
             <label for="usuario">Usuário</label>
-            <input type="text" name="usuario" placeholder="Nome de Usuário" required>
+            <input type="text" name="usuario" placeholder="Nome de Usuário" required value="{{ usuario or '' }}">
 
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Seuemail@gmail.com" required>
+            <input type="email" id="email" name="email" placeholder="Seuemail@gmail.com" required value="{{ email or '' }}">
 
             <label for="senha">Senha</label>
-            <input type="password" name="senha" placeholder="Senha" required>
+            <input type="password" id="senha" name="senha" placeholder="Senha" required>
+
             <input type="password" name="confirmar" placeholder="Confirme sua senha" required>
 
             <div class="orientacao">
@@ -139,6 +152,8 @@
             <p>Já tem uma conta? <a href="/login">Fazer login</a></p>
         </div>
     </div>
+
+    <!-- Substitua o trecho atual do <script> por este abaixo: -->
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
@@ -166,5 +181,16 @@
             "retina_detect": true
         });
     </script>
+
+    {% if senha_invalida %}
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const campo = document.getElementById('senha');
+            if (campo) {
+                campo.classList.add('shake');
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
